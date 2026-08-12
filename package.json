@@ -1,0 +1,19 @@
+{
+  "name": "antigravity-mobile-ide",
+  "version": "1.4.0",
+  "description": "Mobile-first IDE and Desktop Bridge Server for Antigravity AI agents.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "antigravity",
+    "mobile-ide",
+    "pwa",
+    "desktop-bridge",
+    "ai-agent"
+  ],
+  "author": "AAARK69",
+  "license": "MIT"
+}

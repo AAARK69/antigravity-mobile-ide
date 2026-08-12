@@ -58,12 +58,16 @@
             <div class="model-badge">
               <span class="badge-dot pulse"></span>
               <select id="modelSelector" class="model-select">
-                <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+                <option value="gemini-3.6-flash">Gemini 3.6 Flash</option>
                 <option value="gemini-3.5-pro">Gemini 3.5 Pro</option>
                 <option value="gemini-3.1-flash">Gemini 3.1 Flash</option>
-                <option value="gemini-3.1-pro">Gemini 3.1 Pro</option>
               </select>
             </div>
+            <!-- Desktop Bridge Status Pill -->
+            <button class="bridge-status-pill offline" id="bridgeStatusPill" title="Click to view Desktop Connection">
+              <span class="bridge-dot"></span>
+              <span class="bridge-label" id="bridgeStatusLabel">Demo Mode</span>
+            </button>
           </div>
 
           <div class="header-actions">
@@ -98,7 +102,7 @@
           </button>
           <button class="tab-btn" data-tab="skills">
             <span class="tab-icon">⚡</span>
-            <span class="tab-text">Skills</span>
+            <span class="tab-text">Desktop</span>
           </button>
         </nav>
 
@@ -131,21 +135,50 @@
                 <div class="timeline-event sys-event">
                   <div class="event-icon">🌟</div>
                   <div class="event-body">
-                    <p class="event-title">Antigravity AI Loaded</p>
-                    <p class="event-desc">Ready to pair-program with you. Choose an option below or type a prompt to start building.</p>
+                    <p class="event-title">Antigravity AI Desktop Client</p>
+                    <p class="event-desc">Pair-programming on your Mac. Type a goal or use slash commands like <code>/goal</code>, <code>/schedule</code>, or <code>/browser</code>.</p>
                     <div class="quick-prompts">
-                      <button class="quick-prompt-btn" data-prompt="Implement a custom user theme toggle component">🎨 Theme Toggle Component</button>
-                      <button class="quick-prompt-btn" data-prompt="Find and optimize slow database queries in workspace">⚡ Optimize DB Queries</button>
-                      <button class="quick-prompt-btn" data-prompt="Add automated Jest unit tests for utility scripts">🧪 Add Jest Tests</button>
+                      <button class="quick-prompt-btn" data-prompt="/goal Add a custom user theme toggle component">🎨 /goal Theme Toggle</button>
+                      <button class="quick-prompt-btn" data-prompt="/schedule Run test suite every 5 minutes">⏱️ /schedule Test Suite</button>
+                      <button class="quick-prompt-btn" data-prompt="/browser Inspect mobile layout performance">🌐 /browser Audit Layout</button>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <!-- Slash Command Popover -->
+              <div class="slash-command-palette hidden" id="slashCommandPalette">
+                <div class="palette-header">Slash Commands</div>
+                <div class="slash-item" data-cmd="/goal">
+                  <span class="slash-cmd-name">/goal</span>
+                  <span class="slash-cmd-desc">Set thorough long-running task goal</span>
+                </div>
+                <div class="slash-item" data-cmd="/schedule">
+                  <span class="slash-cmd-name">/schedule</span>
+                  <span class="slash-cmd-desc">Schedule recurring task or timer</span>
+                </div>
+                <div class="slash-item" data-cmd="/browser">
+                  <span class="slash-cmd-name">/browser</span>
+                  <span class="slash-cmd-desc">Launch Playwright browser agent</span>
+                </div>
+                <div class="slash-item" data-cmd="/grill-me">
+                  <span class="slash-cmd-name">/grill-me</span>
+                  <span class="slash-cmd-desc">Interactive plan alignment interview</span>
+                </div>
+                <div class="slash-item" data-cmd="/teamwork-preview">
+                  <span class="slash-cmd-name">/teamwork-preview</span>
+                  <span class="slash-cmd-desc">Orchestrate autonomous agent squad</span>
+                </div>
+                <div class="slash-item" data-cmd="/learn">
+                  <span class="slash-cmd-name">/learn</span>
+                  <span class="slash-cmd-desc">Save workflow patterns for future tasks</span>
                 </div>
               </div>
 
               <!-- Goal Input Footer -->
               <div class="agent-input-footer">
                 <div class="input-glow-wrapper">
-                  <input type="text" id="agentGoalInput" placeholder="Ask Antigravity to edit code, run tests..." aria-label="Goal Input">
+                  <input type="text" id="agentGoalInput" placeholder="Type / for commands or enter goal..." aria-label="Goal Input">
                   <button id="sendGoalBtn" title="Send goal to agent" aria-label="Send goal">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                   </button>
@@ -168,11 +201,17 @@
                   <!-- Rendered dynamically -->
                 </div>
               </div>
-              <!-- Right Side: Code Editor -->
+              <!-- Right Side: Code Editor with Multi-File Tab Bar -->
               <div class="code-editor-panel" id="codeEditorPanel">
+                <!-- Multi-File Editor Tab Bar -->
+                <div class="editor-tab-bar" id="editorTabBar">
+                  <!-- Tabs rendered dynamically -->
+                </div>
+
                 <div class="editor-header">
                   <span class="active-filename" id="editorFilename">Select a file</span>
                   <div class="editor-actions">
+                    <button class="editor-btn-save" id="saveFileBtn">Save to Disk</button>
                     <span class="save-status-indicator" id="saveIndicator">Saved</span>
                   </div>
                 </div>
@@ -233,7 +272,7 @@
               </div>
               <div class="terminal-body" id="terminalBody">
                 <div class="term-line">Welcome to the Antigravity Terminal. Type 'help' to see available shell commands.</div>
-                <div class="term-line">Connection established to local agent container [bypass sandbox: false].</div>
+                <div class="term-line" id="terminalConnectionMsg">Connection status: Demo Simulation Mode.</div>
                 <!-- Log lines -->
                 <div class="terminal-logs" id="terminalLogs"></div>
                 <!-- Prompt line -->
@@ -245,12 +284,51 @@
             </div>
           </section>
 
-          <!-- SKILLS PANEL -->
+          <!-- SKILLS & DESKTOP SYSTEM PANEL -->
           <section class="tab-panel" id="panel-skills">
             <div class="panel-inner skills-layout">
-              <h2 class="settings-main-title">AI Agent Settings</h2>
+              <h2 class="settings-main-title">Desktop System & Subagents</h2>
               
-              <!-- Skill Switch Group -->
+              <!-- Real Desktop System Resource Monitoring Bar -->
+              <div class="settings-group" id="desktopResourceGroup">
+                <h3 class="settings-group-title">Mac Computer Hardware Monitor</h3>
+                <div class="system-metric-row">
+                  <span class="metric-label">CPU Core Usage</span>
+                  <div class="metric-bar"><div class="metric-fill" id="cpuUsageFill" style="width: 28%;"></div></div>
+                  <span class="metric-value" id="cpuUsageVal">28% (8 Cores)</span>
+                </div>
+                <div class="system-metric-row">
+                  <span class="metric-label">RAM Usage</span>
+                  <div class="metric-bar"><div class="metric-fill" id="ramUsageFill" style="width: 42%;"></div></div>
+                  <span class="metric-value" id="ramUsageVal">6.7 / 16 GB</span>
+                </div>
+                <div class="system-specs-mini" id="systemSpecsText">
+                  OS: macOS Darwin 23.4.0 (arm64) | Node v24.16.0
+                </div>
+              </div>
+
+              <!-- Active Subagent Manager -->
+              <div class="settings-group">
+                <h3 class="settings-group-title">Active Subagent Squad</h3>
+                <div class="subagent-list" id="subagentListContainer">
+                  <div class="subagent-card">
+                    <div class="subagent-header">
+                      <span class="subagent-role">🔍 Codebase Researcher</span>
+                      <span class="subagent-status status-idle">IDLE</span>
+                    </div>
+                    <p class="subagent-desc">Read-only code search & file analysis subagent.</p>
+                  </div>
+                  <div class="subagent-card">
+                    <div class="subagent-header">
+                      <span class="subagent-role">⚙️ Autonomous Code Editor</span>
+                      <span class="subagent-status status-active">ACTIVE</span>
+                    </div>
+                    <p class="subagent-desc">Performs non-contiguous multi-file editing.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Active Plugins & Skills -->
               <div class="settings-group">
                 <h3 class="settings-group-title">Active Plugins & Skills</h3>
                 
@@ -267,17 +345,6 @@
 
                 <div class="setting-row">
                   <div class="setting-info">
-                    <span class="setting-name">Accessibility Auditing (a11y)</span>
-                    <span class="setting-desc">Check accessibility standard compliance automatically.</span>
-                  </div>
-                  <label class="switch">
-                    <input type="checkbox" id="skillToggleA11y">
-                    <span class="slider"></span>
-                  </label>
-                </div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
                     <span class="setting-name">Google Antigravity SDK</span>
                     <span class="setting-desc">Build autonomous multi-agent structures for this session.</span>
                   </div>
@@ -286,58 +353,11 @@
                     <span class="slider"></span>
                   </label>
                 </div>
-
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Memory Leak Debugging</span>
-                    <span class="setting-desc">Detect memory bloating using dynamic heap analyses.</span>
-                  </div>
-                  <label class="switch">
-                    <input type="checkbox" id="skillToggleMemory">
-                    <span class="slider"></span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Terminal & Sandboxing Bypass Options -->
-              <div class="settings-group">
-                <h3 class="settings-group-title">Terminal & Security</h3>
-                
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Bypass Sandbox Execution</span>
-                    <span class="setting-desc">Disable terminal process isolation for network operations.</span>
-                  </div>
-                  <label class="switch">
-                    <input type="checkbox" id="settingsBypassSandbox">
-                    <span class="slider"></span>
-                  </label>
-                </div>
-                
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Auto-Approve Read Commands</span>
-                    <span class="setting-desc">Allows agent to read directories and files without prompts.</span>
-                  </div>
-                  <label class="switch">
-                    <input type="checkbox" id="settingsAutoApproveRead" checked>
-                    <span class="slider"></span>
-                  </label>
-                </div>
               </div>
 
               <!-- App Settings & Preferences -->
               <div class="settings-group">
-                <h3 class="settings-group-title">System & Notification Controls</h3>
-                
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Push Notifications</span>
-                    <span class="setting-desc">Get native notifications on compilation complete.</span>
-                  </div>
-                  <button class="settings-btn-action" id="requestPushBtn">Enable</button>
-                </div>
-
+                <h3 class="settings-group-title">Theme & Color Customization</h3>
                 <div class="setting-row">
                   <div class="setting-info">
                     <span class="setting-name">Dark OLED Accent Color</span>
@@ -367,6 +387,31 @@
           <div class="notif-body">
             <h4 class="notif-title" id="notifTitle">Task Finished Successfully</h4>
             <p class="notif-desc" id="notifDesc">Successfully built project. Walkthrough generated.</p>
+          </div>
+        </div>
+
+        <!-- Desktop Bridge Configuration Modal -->
+        <div class="bridge-modal-overlay" id="bridgeModalOverlay"></div>
+        <div class="bridge-modal" id="bridgeModal">
+          <div class="bridge-modal-header">
+            <h3>🖥️ Desktop Bridge Server</h3>
+            <button class="drawer-close-btn" id="bridgeModalClose" aria-label="Close Bridge Modal">×</button>
+          </div>
+          <div class="bridge-modal-body">
+            <p class="bridge-modal-desc">
+              Connect this mobile client to your desktop Mac to run real terminal commands and sync disk files.
+            </p>
+            <div class="form-group">
+              <label for="bridgeServerUrl">Desktop Server URL:</label>
+              <input type="text" id="bridgeServerUrl" value="http://localhost:3001">
+            </div>
+            <div class="bridge-modal-actions">
+              <button class="btn-commit" id="connectBridgeBtn">Connect to Desktop</button>
+              <button class="settings-btn-action" id="disconnectBridgeBtn">Use Demo Mode</button>
+            </div>
+            <div class="bridge-log-output" id="bridgeModalLogs">
+              Ready to test connection to http://localhost:3001
+            </div>
           </div>
         </div>
 
