@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.4
+Type=Application
+Name=Antigravity Mobile IDE
+Comment=Mobile IDE and Desktop Bridge for Antigravity AI
+Exec=bash -c "cd %k && ./launch-desktop-bridge.sh"
+Icon=utilities-terminal
+Terminal=true
+Categories=Development;IDE;Utility;
