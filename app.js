@@ -22,7 +22,7 @@ const DEMO_WORKSPACES = {
       'styles.css': `/* Mobile IDE Theme Styles */\n:root {\n  --theme-accent: #00e5ff;\n  --bg-primary: #06080d;\n}`,
       'app.js': `// Antigravity AI Mobile Client core file\nconsole.log("Antigravity client ready.");`,
       'server.js': `// Antigravity Desktop Bridge Server\nconst http = require('http');\nconst PORT = 3001;`,
-      'package.json': `{\n  "name": "antigravity-mobile-ide",\n  "version": "1.3.0",\n  "scripts": {\n    "start": "node server.js"\n  }\n}`
+      'package.json': `{\n  "name": "antigravity-mobile-ide",\n  "version": "1.4.0",\n  "scripts": {\n    "start": "node server.js"\n  }\n}`
     },
     git: [
       { path: 'app.js', status: 'modified', staged: false, contentBefore: 'console.log("Antigravity client ready.");', contentAfter: 'console.log("Antigravity client initialized with Desktop Bridge.");' }
@@ -49,7 +49,10 @@ let state = {
 
   // Multi-File Tab State
   openTabs: [], // Array of { path, content, language }
-  activeTabIndex: -1
+  activeTabIndex: -1,
+
+  // Extensions Filter State
+  activeExtensionFilter: 'All'
 };
 
 // DOM Elements Reference
@@ -75,13 +78,6 @@ const DOM = {
   disconnectBridgeBtn: document.getElementById('disconnectBridgeBtn'),
   bridgeModalLogs: document.getElementById('bridgeModalLogs'),
 
-  // Hardware metric refs
-  cpuUsageFill: document.getElementById('cpuUsageFill'),
-  cpuUsageVal: document.getElementById('cpuUsageVal'),
-  ramUsageFill: document.getElementById('ramUsageFill'),
-  ramUsageVal: document.getElementById('ramUsageVal'),
-  systemSpecsText: document.getElementById('systemSpecsText'),
-
   // Slash Command Palette refs
   slashCommandPalette: document.getElementById('slashCommandPalette'),
   slashItems: document.querySelectorAll('.slash-item'),
@@ -99,6 +95,15 @@ const DOM = {
   saveIndicator: document.getElementById('saveIndicator'),
   saveFileBtn: document.getElementById('saveFileBtn'),
   refreshTree: document.getElementById('refreshTree'),
+  editorCalloutBanner: document.getElementById('editorCalloutBanner'),
+  calloutTitle: document.getElementById('calloutTitle'),
+  calloutText: document.getElementById('calloutText'),
+
+  // Extensions refs
+  extSearchInput: document.getElementById('extSearchInput'),
+  extFilterChips: document.querySelectorAll('.chip'),
+  extCards: document.querySelectorAll('.ext-card'),
+  btnExtStatuses: document.querySelectorAll('.btn-ext-status'),
 
   // Git refs
   gitChangeCount: document.getElementById('gitChangeCount'),
@@ -138,6 +143,7 @@ function init() {
   setupBridgeListeners();
   setupSlashCommandListeners();
   setupFileEditorListeners();
+  setupExtensionsListeners();
   setupGitListeners();
   setupTerminalListeners();
   setupAgentListeners();
@@ -158,6 +164,60 @@ function updateClock() {
   hours = hours < 10 ? '0' + hours : hours;
   minutes = minutes < 10 ? '0' + minutes : minutes;
   DOM.deviceTime.textContent = `${hours}:${minutes}`;
+}
+
+/* ==========================================
+   EXTENSIONS MARKETPLACE LOGIC
+   ========================================== */
+function setupExtensionsListeners() {
+  // Search filtering
+  DOM.extSearchInput.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    DOM.extCards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      if (text.includes(q)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+
+  // Filter chips
+  DOM.extFilterChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      DOM.extFilterChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+
+      const filter = chip.getAttribute('data-filter');
+      state.activeExtensionFilter = filter;
+
+      DOM.extCards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        if (filter === 'All' || cat === filter) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Install / Installed toggle
+  DOM.btnExtStatuses.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const extName = btn.getAttribute('data-ext');
+      if (btn.classList.contains('installed')) {
+        btn.className = 'btn-ext-status install-btn';
+        btn.textContent = 'Install';
+        addTerminalLine(`[Extensions] Disabled extension: <strong>${extName}</strong>`, 'cmd-output');
+      } else {
+        btn.className = 'btn-ext-status installed';
+        btn.textContent = 'Installed';
+        addTerminalLine(`[Extensions] Installed and loaded skills for: <strong>${extName}</strong>`, 'cmd-success');
+      }
+    });
+  });
 }
 
 /* ==========================================
@@ -184,18 +244,8 @@ function setBridgeConnected(sysStatus) {
   state.isDesktopConnected = true;
   DOM.bridgeStatusPill.className = 'bridge-status-pill online';
   DOM.bridgeStatusLabel.textContent = 'Mac Connected';
-
-  // Hardware monitor metrics
-  DOM.cpuUsageFill.style.width = `${sysStatus.memUsagePercent}%`;
-  DOM.cpuUsageVal.textContent = `${sysStatus.memUsagePercent}% (${sysStatus.cpuCores} Cores)`;
-  
-  DOM.ramUsageFill.style.width = `${sysStatus.memUsagePercent}%`;
-  DOM.ramUsageVal.textContent = `${sysStatus.memUsedMb} / ${sysStatus.memTotalMb} MB`;
-  
-  DOM.systemSpecsText.textContent = `OS: ${sysStatus.os} | Node: ${sysStatus.nodeVersion} | Host: ${sysStatus.hostname}`;
   DOM.terminalConnectionMsg.textContent = `🟢 Connection status: Live Desktop Bridge Server (${state.bridgeUrl}). Shell commands execute directly on Mac.`;
 
-  // Fetch real workspace file tree
   fetchRealWorkspace();
 }
 
@@ -218,7 +268,6 @@ async function fetchRealWorkspace() {
       addTerminalLine(`[Bridge] Loaded real desktop workspace tree from disk: <code>${data.root}</code>`, 'cmd-success');
     }
   } catch (err) {
-    console.error('Failed to fetch real workspace tree:', err);
     loadDemoWorkspace();
   }
 }
@@ -356,7 +405,6 @@ function renderDemoFileTree() {
 }
 
 async function openFileTab(filePath, fileName) {
-  // Check if tab is already open
   let existingIndex = state.openTabs.findIndex(t => t.path === filePath);
 
   if (existingIndex !== -1) {
@@ -364,7 +412,6 @@ async function openFileTab(filePath, fileName) {
     return;
   }
 
-  // Fetch file content
   let content = '';
   if (state.isDesktopConnected) {
     try {
@@ -374,7 +421,7 @@ async function openFileTab(filePath, fileName) {
         content = data.content;
       }
     } catch (err) {
-      content = `// Error loading file from desktop bridge: ${err.message}`;
+      content = `// Error loading file: ${err.message}`;
     }
   } else {
     const workspace = DEMO_WORKSPACES[state.currentWorkspace];
@@ -408,6 +455,18 @@ function setActiveTab(index) {
   DOM.editorFilename.textContent = file.name;
   DOM.editorLang.textContent = file.ext.toUpperCase();
   DOM.codeText.innerHTML = simulateSyntaxHighlight(file.content, file.ext);
+
+  // Update Callout Banner insight
+  if (file.ext === 'js' || file.ext === 'ts') {
+    DOM.calloutTitle.textContent = "🛡️ Safety First: Null guards & Optionals";
+    DOM.calloutText.textContent = "In JavaScript/TypeScript, verify non-null states before property dereferencing (e.g. obj?.property).";
+  } else if (file.ext === 'html') {
+    DOM.calloutTitle.textContent = "🌐 PWA Optimization: Meta & Viewport";
+    DOM.calloutText.textContent = "Ensure mobile web app standalone display tags are declared in head.";
+  } else {
+    DOM.calloutTitle.textContent = "⚡ Code Analysis: High-Efficiency Format";
+    DOM.calloutText.textContent = "Clean file structure loaded into editor.";
+  }
 
   const lineCount = file.content.split('\n').length;
   DOM.editorLineNumbers.innerHTML = Array.from({length: lineCount}, (_, i) => i + 1).join('<br>');
@@ -507,7 +566,6 @@ function setupTerminalListeners() {
       addTerminalLine(`antigravity@macbook % ${command}`, 'term-line');
 
       if (state.isDesktopConnected) {
-        // Execute command directly on Mac Desktop Shell!
         try {
           const res = await fetch(`${state.bridgeUrl}/api/exec`, {
             method: 'POST',
@@ -523,7 +581,6 @@ function setupTerminalListeners() {
           addTerminalLine(`Bridge exec error: ${err.message}`, 'cmd-error');
         }
       } else {
-        // Fallback demo simulation
         if (command === 'help') {
           addTerminalLine(`Available Demo CLI Commands: help, ls, cat, git status, npm run test, npm run dev, clear`, 'cmd-header');
         } else if (command === 'clear') {
@@ -563,7 +620,7 @@ function switchTab(tabId) {
 }
 
 /* ==========================================
-   DRAWER
+   DRAWER & SETTINGS
    ========================================== */
 function setupDrawerListeners() {
   DOM.sidebarToggle.addEventListener('click', () => {
@@ -578,9 +635,6 @@ function closeDrawer() {
   DOM.drawerOverlay.classList.remove('active');
 }
 
-/* ==========================================
-   GIT & AGENT & SETTINGS
-   ========================================== */
 function setupGitListeners() {
   DOM.gitCommitBtn.addEventListener('click', () => {
     alert("Commit & push simulation triggered!");

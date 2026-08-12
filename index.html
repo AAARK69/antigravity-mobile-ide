@@ -100,9 +100,9 @@
             <span class="tab-icon">🐚</span>
             <span class="tab-text">Terminal</span>
           </button>
-          <button class="tab-btn" data-tab="skills">
-            <span class="tab-icon">⚡</span>
-            <span class="tab-text">Desktop</span>
+          <button class="tab-btn" data-tab="extensions">
+            <span class="tab-icon">🧩</span>
+            <span class="tab-text">Extensions</span>
           </button>
         </nav>
 
@@ -201,7 +201,7 @@
                   <!-- Rendered dynamically -->
                 </div>
               </div>
-              <!-- Right Side: Code Editor with Multi-File Tab Bar -->
+              <!-- Right Side: Code Editor with Multi-File Tab Bar & Callout Card -->
               <div class="code-editor-panel" id="codeEditorPanel">
                 <!-- Multi-File Editor Tab Bar -->
                 <div class="editor-tab-bar" id="editorTabBar">
@@ -215,6 +215,18 @@
                     <span class="save-status-indicator" id="saveIndicator">Saved</span>
                   </div>
                 </div>
+
+                <!-- Code Insight / Callout Banner (Matching App Store UI) -->
+                <div class="editor-callout-banner" id="editorCalloutBanner">
+                  <div class="callout-header">
+                    <span class="callout-icon">🛡️</span>
+                    <span class="callout-title" id="calloutTitle">Safety First: Optionals and guard</span>
+                  </div>
+                  <p class="callout-text" id="calloutText">
+                    In JavaScript/TypeScript, if a variable <em>might</em> be empty (null), declare safety guards before dereferencing values.
+                  </p>
+                </div>
+
                 <div class="editor-container">
                   <div class="line-numbers" id="editorLineNumbers"></div>
                   <pre class="code-view" id="editorCodeBlock"><code id="codeText" class="language-javascript">// Choose a file from the workspace sidebar menu to inspect or edit the codebase.</code></pre>
@@ -284,94 +296,130 @@
             </div>
           </section>
 
-          <!-- SKILLS & DESKTOP SYSTEM PANEL -->
-          <section class="tab-panel" id="panel-skills">
-            <div class="panel-inner skills-layout">
-              <h2 class="settings-main-title">Desktop System & Subagents</h2>
-              
-              <!-- Real Desktop System Resource Monitoring Bar -->
-              <div class="settings-group" id="desktopResourceGroup">
-                <h3 class="settings-group-title">Mac Computer Hardware Monitor</h3>
-                <div class="system-metric-row">
-                  <span class="metric-label">CPU Core Usage</span>
-                  <div class="metric-bar"><div class="metric-fill" id="cpuUsageFill" style="width: 28%;"></div></div>
-                  <span class="metric-value" id="cpuUsageVal">28% (8 Cores)</span>
-                </div>
-                <div class="system-metric-row">
-                  <span class="metric-label">RAM Usage</span>
-                  <div class="metric-bar"><div class="metric-fill" id="ramUsageFill" style="width: 42%;"></div></div>
-                  <span class="metric-value" id="ramUsageVal">6.7 / 16 GB</span>
-                </div>
-                <div class="system-specs-mini" id="systemSpecsText">
-                  OS: macOS Darwin 23.4.0 (arm64) | Node v24.16.0
-                </div>
+          <!-- EXTENSIONS MARKETPLACE PANEL (Matching App Store Preview 1:1) -->
+          <section class="tab-panel" id="panel-extensions">
+            <div class="panel-inner extensions-layout">
+              <div class="extensions-header">
+                <h2>Extensions & Skills</h2>
+                <span class="ext-badge-all">All Available</span>
               </div>
 
-              <!-- Active Subagent Manager -->
-              <div class="settings-group">
-                <h3 class="settings-group-title">Active Subagent Squad</h3>
-                <div class="subagent-list" id="subagentListContainer">
-                  <div class="subagent-card">
-                    <div class="subagent-header">
-                      <span class="subagent-role">🔍 Codebase Researcher</span>
-                      <span class="subagent-status status-idle">IDLE</span>
-                    </div>
-                    <p class="subagent-desc">Read-only code search & file analysis subagent.</p>
-                  </div>
-                  <div class="subagent-card">
-                    <div class="subagent-header">
-                      <span class="subagent-role">⚙️ Autonomous Code Editor</span>
-                      <span class="subagent-status status-active">ACTIVE</span>
-                    </div>
-                    <p class="subagent-desc">Performs non-contiguous multi-file editing.</p>
-                  </div>
-                </div>
+              <!-- Search Bar -->
+              <div class="extensions-search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="extSearchInput" placeholder="Search extensions by name, tag, or author...">
               </div>
 
-              <!-- Active Plugins & Skills -->
-              <div class="settings-group">
-                <h3 class="settings-group-title">Active Plugins & Skills</h3>
+              <!-- Category Filter Chips -->
+              <div class="ext-filter-chips" id="extFilterChips">
+                <button class="chip active" data-filter="All">All</button>
+                <button class="chip" data-filter="Skills">Skills</button>
+                <button class="chip" data-filter="Context">Context</button>
+                <button class="chip" data-filter="Tools">Tools</button>
+                <button class="chip" data-filter="Compliance">Compliance</button>
+              </div>
+
+              <!-- Extension Cards List -->
+              <div class="extensions-list" id="extensionsListContainer">
                 
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Chrome DevTools Integration</span>
-                    <span class="setting-desc">Enables debugging layout, network requests and web actions.</span>
+                <!-- Card 1 -->
+                <div class="ext-card" data-category="Skills">
+                  <div class="ext-card-header">
+                    <div class="ext-author-avatar">
+                      <img src="https://avatars.githubusercontent.com/u/10834?v=4" alt="obra" onerror="this.src='icon.png'">
+                    </div>
+                    <div class="ext-title-meta">
+                      <span class="ext-title">superpowers</span>
+                      <span class="ext-author">@obra/superpowers</span>
+                    </div>
+                    <button class="btn-ext-status installed" data-ext="superpowers">Installed</button>
                   </div>
-                  <label class="switch">
-                    <input type="checkbox" id="skillToggleDevtools" checked>
-                    <span class="slider"></span>
-                  </label>
+                  <p class="ext-desc">Core skills library: TDD, collaboration patterns, systematic debugging techniques, and self-review.</p>
+                  <div class="ext-tags">
+                    <span class="ext-tag">Context</span>
+                    <span class="ext-tag">Skills</span>
+                    <span class="ext-tag">Compliance</span>
+                  </div>
                 </div>
 
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Google Antigravity SDK</span>
-                    <span class="setting-desc">Build autonomous multi-agent structures for this session.</span>
+                <!-- Card 2 -->
+                <div class="ext-card" data-category="Context">
+                  <div class="ext-card-header">
+                    <div class="ext-author-avatar">
+                      <img src="https://avatars.githubusercontent.com/u/1498501?v=4" alt="context7" onerror="this.src='icon.png'">
+                    </div>
+                    <div class="ext-title-meta">
+                      <span class="ext-title">context7</span>
+                      <span class="ext-author">@unstash/context7</span>
+                    </div>
+                    <button class="btn-ext-status installed" data-ext="context7">Installed</button>
                   </div>
-                  <label class="switch">
-                    <input type="checkbox" id="skillToggleSdk" checked>
-                    <span class="slider"></span>
-                  </label>
+                  <p class="ext-desc">Ultra-compressed documentation & framework reference for LLM token efficiency.</p>
+                  <div class="ext-tags">
+                    <span class="ext-tag">Docs</span>
+                    <span class="ext-tag">Context</span>
+                  </div>
                 </div>
+
+                <!-- Card 3 -->
+                <div class="ext-card" data-category="Tools">
+                  <div class="ext-card-header">
+                    <div class="ext-author-avatar">
+                      <span class="ext-avatar-emoji">🌐</span>
+                    </div>
+                    <div class="ext-title-meta">
+                      <span class="ext-title">chrome-devtools</span>
+                      <span class="ext-author">@google/chrome-devtools</span>
+                    </div>
+                    <button class="btn-ext-status installed" data-ext="chrome-devtools">Installed</button>
+                  </div>
+                  <p class="ext-desc">Browser automation, DOM inspection, accessibility (a11y) auditing, and network profiling.</p>
+                  <div class="ext-tags">
+                    <span class="ext-tag">DevTools</span>
+                    <span class="ext-tag">A11y</span>
+                    <span class="ext-tag">Tools</span>
+                  </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="ext-card" data-category="Tools">
+                  <div class="ext-card-header">
+                    <div class="ext-author-avatar">
+                      <span class="ext-avatar-emoji">🤖</span>
+                    </div>
+                    <div class="ext-title-meta">
+                      <span class="ext-title">google-antigravity-sdk</span>
+                      <span class="ext-author">@google/antigravity</span>
+                    </div>
+                    <button class="btn-ext-status installed" data-ext="sdk">Installed</button>
+                  </div>
+                  <p class="ext-desc">Design, implement, and debug autonomous AI agents and multi-agent squad structures.</p>
+                  <div class="ext-tags">
+                    <span class="ext-tag">SDK</span>
+                    <span class="ext-tag">Agent</span>
+                  </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="ext-card" data-category="Compliance">
+                  <div class="ext-card-header">
+                    <div class="ext-author-avatar">
+                      <span class="ext-avatar-emoji">🧪</span>
+                    </div>
+                    <div class="ext-title-meta">
+                      <span class="ext-title">jest-test-runner</span>
+                      <span class="ext-author">@jest/runner</span>
+                    </div>
+                    <button class="btn-ext-status install-btn" data-ext="jest">Install</button>
+                  </div>
+                  <p class="ext-desc">Automated unit test execution runner with terminal progress bar reporting.</p>
+                  <div class="ext-tags">
+                    <span class="ext-tag">Testing</span>
+                    <span class="ext-tag">CLI</span>
+                  </div>
+                </div>
+
               </div>
-
-              <!-- App Settings & Preferences -->
-              <div class="settings-group">
-                <h3 class="settings-group-title">Theme & Color Customization</h3>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Dark OLED Accent Color</span>
-                    <span class="setting-desc">Select primary workspace aesthetic highlight color.</span>
-                  </div>
-                  <div class="theme-accent-selectors">
-                    <span class="accent-dot dot-cyan active" data-color="cyan"></span>
-                    <span class="accent-dot dot-purple" data-color="purple"></span>
-                    <span class="accent-dot dot-green" data-color="green"></span>
-                    <span class="accent-dot dot-amber" data-color="amber"></span>
-                  </div>
-                </div>
-              </div>
-
             </div>
           </section>
 
