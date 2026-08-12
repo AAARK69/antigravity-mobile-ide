@@ -1,57 +1,74 @@
 # ⚡ Antigravity Mobile IDE & Desktop Bridge
 
-A premium, responsive Mobile IDE dashboard, Progressive Web App (PWA), and Desktop Bridge Server for orchestrating Google DeepMind's **Antigravity AI** coding agents directly on your computer.
+[![Deploy to GitHub Pages](https://github.com/AAARK69/antigravity-mobile-ide/actions/workflows/deploy.yml/badge.svg)](https://github.com/AAARK69/antigravity-mobile-ide/actions/workflows/deploy.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PWA Ready](https://img.shields.io/badge/PWA-Installable-blue.svg)](https://aaark69.github.io/antigravity-mobile-ide/)
+
+A free, open-source, mobile-first IDE dashboard, Progressive Web App (PWA), and Desktop Bridge Server for orchestrating Google DeepMind's **Antigravity AI** coding agents directly from your phone.
 
 ---
 
-## 🖥️ Desktop Bridge Server (Run Local Commands & Sync Disk)
+## 📥 Download & Quick Start
 
-This app includes a **zero-dependency Node.js Desktop Bridge Server** (`server.js`) that connects your phone or browser PWA directly to your Mac computer.
+### 1. Download Source Code
+- [**📦 Download Latest Release (.zip)**](https://github.com/AAARK69/antigravity-mobile-ide/archive/refs/heads/main.zip)
+- Or clone via Git:
+  ```bash
+  git clone https://github.com/AAARK69/antigravity-mobile-ide.git
+  cd antigravity-mobile-ide
+  ```
 
-### How to Run Desktop Mode on Your Mac:
-1. Open terminal on your computer and navigate to this folder:
-   ```bash
-   cd /Users/rohankosur/Documents/GithubProjects/antigravity-mobile-ide
-   npm start
-   ```
-2. The server starts at `http://localhost:3001`.
-3. Open the Mobile PWA on your phone or browser. The status badge in the top bar will turn **🟢 Mac Connected**.
-4. Now, any file edited in the phone UI saves directly to your computer's disk, and any command entered in the mobile shell executes live on your Mac terminal!
+### 2. Run Desktop Mode on Your Mac/PC
+- **Option A (Double-Click Launcher)**: Double-click **`launch-desktop-bridge.command`** inside the folder on macOS.
+- **Option B (Terminal)**:
+  ```bash
+  npm start
+  ```
+
+The Desktop Bridge Server starts at `http://localhost:3001`. Open the live app link below on your phone or computer, and the top indicator will turn **🟢 Mac Connected**.
+
+---
+
+## 📱 Live App Links
+
+- **Web / PWA Client**: [https://aaark69.github.io/antigravity-mobile-ide/](https://aaark69.github.io/antigravity-mobile-ide/)
+- **GitHub Repository**: [https://github.com/AAARK69/antigravity-mobile-ide](https://github.com/AAARK69/antigravity-mobile-ide)
 
 ---
 
 ## ✨ Features
 
-- **📱 Immersive Device Bezel**: Renders inside a sleek phone frame mockup on desktop screen viewports, and automatically scales to edge-to-edge full screen on mobile devices.
-- **🖥️ Live Hardware Monitor**: Inspect your Mac's CPU core usage %, RAM load, node version, and operating system info directly from your phone.
-- **📄 Multi-File Editor Tabs**: Open, switch between, and close multiple workspace files simultaneously with dirty/modified state indicators.
-- **⚡ Slash Command Palette**: Quick popover menu for `/goal`, `/schedule`, `/browser`, `/grill-me`, `/teamwork-preview`, and `/learn`.
-- **🧠 Live Agent Simulation**: Watch a mock Antigravity agent process code changes, search directories, and compile files step-by-step.
-- **🐚 Command Shell Terminal**: Pipe terminal inputs to `/api/exec` for real `zsh`/`bash` command execution on your Mac.
-- **🌿 Git Diff Board**: Track modified repository files, stage edits, review color-coded additions/removals, and commit changes.
+- **📱 Immersive Device Shell**: Renders inside an aesthetic phone mockup on desktop browsers, and expands to edge-to-edge full screen on actual mobile devices.
+- **🧩 Extensions & Skills Marketplace**: Built-in skill browser with filters (`Skills`, `Context`, `Tools`, `Compliance`) supporting `@obra/superpowers`, `@unstash/context7`, `@google/chrome-devtools`, and `@google/antigravity`.
+- **🛡️ Code Insights & Safety Callouts**: Inline callout banners displaying safety guidelines, null-guards, and framework advice above editor code blocks.
+- **🖥️ Desktop Hardware Monitor**: Real-time Mac CPU load %, RAM usage, OS release, and Node runtime metrics directly on your phone.
+- **📄 Multi-File Editor Tabs**: Open, switch between, and close multiple files simultaneously with dirty/modified markers.
+- **⚡ Slash Command Palette**: Quick popover menu for shortcuts: `/goal`, `/schedule`, `/browser`, `/grill-me`, `/teamwork-preview`, and `/learn`.
+- **🐚 Command Shell Terminal**: Live shell integration executing commands directly on your Mac terminal via `/api/exec`.
+- **🌿 Git Diff & Staging Board**: Stage repository edits, inspect line differences, and commit code changes.
 
 ---
 
-## 🚀 Easy Deployment & Hosting
+## 🚀 One-Click Cloud Deployment for Developers
 
-### GitHub Pages (Automated)
-This repository includes a pre-configured GitHub Actions deployment workflow:
-1. Push this repository to your GitHub account.
-2. Go to repository **Settings** ➡️ **Pages** ➡️ **Source** ➡️ **GitHub Actions**.
-3. The site compiles and deploys automatically on every push.
+Deploy your own hosted version for free on your preferred cloud platform:
 
-### One-Click Deploy Buttons
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/AAARK69/antigravity-mobile-ide)  
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/AAARK69/antigravity-mobile-ide)
 
 ---
 
-## 📲 How to Install as a PWA on Your Phone
+## 📲 How to Install as a PWA on Mobile Devices
 
 ### Apple iOS (Safari)
-1. Open the hosted URL in **Safari**.
+1. Open [https://aaark69.github.io/antigravity-mobile-ide/](https://aaark69.github.io/antigravity-mobile-ide/) in **Safari**.
 2. Tap the **Share** button ➡️ **Add to Home Screen**.
 
 ### Android (Google Chrome)
-1. Open the hosted URL in **Google Chrome**.
-2. Tap the **Menu** (three dots) ➡️ **Install app** / **Add to Home Screen**.
+1. Open [https://aaark69.github.io/antigravity-mobile-ide/](https://aaark69.github.io/antigravity-mobile-ide/) in **Chrome**.
+2. Tap **Menu** (three dots) ➡️ **Install app** / **Add to Home Screen**.
+
+---
+
+## 📄 License
+Distributed under the MIT License. Open source and free for mass personal and commercial usage.
